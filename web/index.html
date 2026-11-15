@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>接收工作台</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header>
+  <h1>接收工作台</h1>
+  <span id="head-status" class="muted">连接中…</span>
+</header>
+
+<nav id="tabs">
+  <button data-tab="overview" class="active">总览</button>
+  <button data-tab="packages">数据包</button>
+  <button data-tab="rules">规则版本</button>
+  <button data-tab="replay">重放与发布</button>
+  <button data-tab="trace">结果追溯</button>
+  <button data-tab="events">审计事件</button>
+</nav>
+
+<main>
+  <section id="tab-overview" class="tab active">
+    <div class="cards" id="overview-cards"></div>
+    <div class="panel">
+      <h2>当前发布（开放快照）</h2>
+      <div id="current-snapshot"></div>
+    </div>
+    <div class="panel">
+      <h2>待处理悬挂（更正/撤销先于原件到达）</h2>
+      <div id="pending-list"></div>
+    </div>
+    <div class="panel">
+      <h2>最近事件</h2>
+      <div id="recent-events"></div>
+    </div>
+  </section>
+
+  <section id="tab-packages" class="tab">
+    <div class="panel">
+      <h2>已收数据包 <span class="muted">原始包只收一次：重复投递自动忽略，同号不同内容拒绝</span></h2>
+      <div id="packages-table"></div>
+    </div>
+  </section>
+
+  <section id="tab-rules" class="tab">
+    <div class="panel">
+      <h2>已注册规则版本</h2>
+      <div id="rules-list"></div>
+    </div>
+    <div class="panel">
+      <h2>注册新版本（JSON 规格）</h2>
+      <textarea id="rule-spec" rows="14" spellcheck="false"></textarea>
+      <div class="row">
+        <input id="rule-note" placeholder="备注（可选）" size="40">
+        <button id="btn-register-rule">注册规则</button>
+        <button id="btn-fill-v2">填入 v2 示例</button>
+      </div>
+      <div id="rule-register-result"></div>
+    </div>
+  </section>
+
+  <section id="tab-replay" class="tab">
+    <div class="panel decision">
+      <h2>切换策略：影子核对后整体切换</h2>
+      <p>重放在影子中进行，不阻塞现行发布与新包接入；核对差异后<strong>一次性整体切换</strong>。
+      重放期间到达的新包在切换事务内用<strong>新规则追平</strong>，保证发布的每份数据集 100% 单一规则，
+      绝不把两套规则的半成品混成完整数据集。按批次切换省下的只是追平这一段等待，
+      却会把混合规则的风险推给下游，因此不采用。升级失败可随时回滚到任一已封存快照（旧结果从未被改动）。</p>
+    </div>
+    <div class="panel">
+      <h2>发起重放</h2>
+      <div class="row">
+        <select id="replay-rule"></select>
+        <button id="btn-start-replay">开始重放</button>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>重放任务</h2>
+      <div id="replays-table"></div>
+    </div>
+    <div class="panel">
+      <h2>快照历史与回滚</h2>
+      <div id="snapshots-table"></div>
+    </div>
+  </section>
+
+  <section id="tab-trace" class="tab">
+    <div class="panel">
+      <h2>按记录追溯</h2>
+      <div class="row">
+        <input id="trace-record-id" placeholder="record_id，如 rec-002" size="30">
+        <button id="btn-trace">追溯</button>
+      </div>
+      <div id="trace-result"></div>
+    </div>
+  </section>
+
+  <section id="tab-events" class="tab">
+    <div class="panel">
+      <h2>审计事件（append-only）</h2>
+      <div id="events-table"></div>
+    </div>
+  </section>
+</main>
+
+<div id="modal-mask" class="hidden">
+  <div id="modal">
+    <div id="modal-head"><span id="modal-title"></span><button id="modal-close">×</button></div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>
